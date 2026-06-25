@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "apiLevel": 2,
   "meta": {
-    "name": "gifSorter",
+    "name": "Gif Sorter",
     "tagline": "A QoL extension to help users sort and use gifs.",
     "description": "",
     "authors": ["chachachalga"],

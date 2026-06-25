@@ -290,7 +290,7 @@ function GifOverlay({ item }: { item: any }) {
           }}
           style={{
             position: "absolute",
-            bottom: "36px",
+            top: "6px",
             right: "6px",
             background: menuColor,
             border: `1px solid ${outlineColor}`,
