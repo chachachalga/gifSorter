@@ -36,8 +36,12 @@ export const webpackModules: ExtensionWebExports["webpackModules"] = {
     dependencies: [],
     entrypoint: true
   },
+  styles: {
+    dependencies: [],
+    entrypoint: true
+  },
   folderBar: {
-    dependencies: [{ id: "react" }, { ext: "gifSorter", id: "storage" }],
+    dependencies: [{ id: "react" }, { ext: "gifSorter", id: "storage" }, { ext: "gifSorter", id: "styles" }],
     entrypoint: true
   }
 };

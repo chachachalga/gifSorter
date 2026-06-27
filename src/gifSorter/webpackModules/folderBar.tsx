@@ -1,13 +1,6 @@
 import React from "@moonlight-mod/wp/react";
 import * as storageModule from "@moonlight-mod/wp/gifSorter_storage";
-
-const backgroundColor = "#393a41";
-const menuColor = "#2c2d32";
-const primaryTextColor = "#dbdee1";
-const secondaryTextColor = "#7d7d84";
-const warningColor = "#f23f43";
-const highlightColor = "#5865f2";
-const outlineColor = "#1e1f22";
+import { styles, globalCss, bg } from "@moonlight-mod/wp/gifSorter_styles";
 
 const FOLDER_NAME_MAX_LENGTH = 16;
 
@@ -21,85 +14,19 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
   const selectedFolder = storage.selectedFolder;
   const isFolderSelected = selectedFolder !== "all";
 
-  const inputStyle = {
-    background: menuColor,
-    border: `1px solid ${outlineColor}`,
-    borderRadius: "6px",
-    color: primaryTextColor,
-    fontSize: "14px",
-    padding: "5px 8px",
-    width: "120px",
-    outline: "none",
-    flexShrink: 0
-  };
-
-  const actionBtnStyle = (variant: "default" | "danger" = "default") => ({
-    background: variant === "danger" ? warningColor : menuColor,
-    border: `1px solid ${variant === "danger" ? warningColor : outlineColor}`,
-    borderRadius: "6px",
-    color: variant === "danger" ? "#ffffff" : primaryTextColor,
-    cursor: "pointer",
-    fontSize: "18px",
-    fontWeight: "bold",
-    width: "32px",
-    height: "32px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-    padding: "0",
-    lineHeight: "1"
-  });
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: "6px 8px",
-        flexShrink: 0,
-        background: backgroundColor
-      }}
-    >
-      <style>{`
-        .gss-input::placeholder { color: ${secondaryTextColor}; }
-        .gss-scroll::-webkit-scrollbar { display: none; }
-        .gss-scroll { scrollbar-width: none; -ms-overflow-style: none; }
-      `}</style>
+    <div style={styles.folderBar}>
+      <style>{globalCss}</style>
 
-      {/* Scrollable tabs area: takes all leftover space, clips its own scrollbar */}
-      <div
-        className="gss-scroll"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: "6px",
-          overflowX: "auto",
-          flex: 1,
-          minWidth: 0
-        }}
-      >
+      {/* Scrollable tabs */}
+      <div className="gss-scroll" style={styles.tabScrollArea}>
         {/* "All" tab */}
         <button
           onClick={async () => {
             storageModule.setSelectedFolder("all");
             gifPickerThis.forceUpdate();
           }}
-          style={{
-            background: selectedFolder === "all" ? highlightColor : menuColor,
-            border: `1px solid ${outlineColor}`,
-            borderRadius: "6px",
-            color: primaryTextColor,
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: selectedFolder === "all" ? "600" : "normal",
-            padding: "5px 12px",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-            height: "30px"
-          }}
+          style={styles.tabButton(selectedFolder === "all")}
         >
           All
         </button>
@@ -112,19 +39,7 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
               storageModule.setSelectedFolder(id);
               gifPickerThis.forceUpdate();
             }}
-            style={{
-              background: selectedFolder === id ? highlightColor : menuColor,
-              border: `1px solid ${outlineColor}`,
-              borderRadius: "6px",
-              color: primaryTextColor,
-              cursor: "pointer",
-              fontSize: "14px",
-              fontWeight: selectedFolder === id ? "600" : "normal",
-              padding: "5px 12px",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              height: "30px"
-            }}
+            style={styles.tabButton(selectedFolder === id)}
           >
             {storage.folders[id].name}
           </button>
@@ -151,7 +66,7 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
               }
             }}
             placeholder="Folder name..."
-            style={inputStyle}
+            style={styles.tabInput}
           />
         )}
 
@@ -176,23 +91,23 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
               }
             }}
             placeholder="New name..."
-            style={inputStyle}
+            style={styles.tabInput}
           />
         )}
       </div>
 
       {/* Thin divider separating scroll area from fixed buttons */}
-      <div style={{ width: "1px", height: "20px", background: outlineColor, margin: "0 8px", flexShrink: 0 }} />
+      <div style={styles.barDivider} />
 
       {/* Action buttons: anchored outside the scroll area, always visible */}
-      <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
+      <div style={styles.actionGroup}>
         {!creating && (
           <button
             onClick={() => {
               setRenaming(false);
               setCreating(true);
             }}
-            style={actionBtnStyle()}
+            style={styles.actionButton()}
           >
             +
           </button>
@@ -204,7 +119,7 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
               setCreating(false);
               setRenaming(true);
             }}
-            style={actionBtnStyle()}
+            style={styles.actionButton()}
           >
             ✎
           </button>
@@ -215,7 +130,7 @@ function FolderBar({ gifPickerThis }: { gifPickerThis: any }) {
               await storageModule.deleteFolder(selectedFolder);
               gifPickerThis.forceUpdate();
             }}
-            style={actionBtnStyle("danger")}
+            style={styles.actionButton("danger")}
           >
             ✕
           </button>
@@ -229,7 +144,7 @@ export function wrapContent(gifPickerThis: any, component: any) {
   const isFavorites = gifPickerThis.state.resultType === "Favorites";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%" }}>
+    <div style={styles.contentWrapper}>
       {isFavorites && <FolderBar gifPickerThis={gifPickerThis} />}
       {component}
     </div>
@@ -250,7 +165,7 @@ function GifOverlay({ item }: { item: any }) {
         onMouseLeave={() => {
           if (!open) setHovered(false);
         }}
-        style={{ position: "absolute", inset: 0, zIndex: 1 }}
+        style={styles.overlayHitArea}
       />
       {(hovered || open) && (
         <div
@@ -262,22 +177,7 @@ function GifOverlay({ item }: { item: any }) {
           onMouseLeave={() => {
             if (!open) setHovered(false);
           }}
-          style={{
-            position: "absolute",
-            bottom: "6px",
-            left: "6px",
-            background: menuColor,
-            border: `1px solid ${outlineColor}`,
-            borderRadius: "4px",
-            cursor: "pointer",
-            padding: "2px 7px",
-            zIndex: 2,
-            color: primaryTextColor,
-            fontSize: "18px",
-            fontWeight: "bold",
-            lineHeight: 1,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.6)"
-          }}
+          style={styles.overlayTrigger}
         >
           +
         </div>
@@ -288,24 +188,9 @@ function GifOverlay({ item }: { item: any }) {
             setHovered(false);
             setOpen(false);
           }}
-          style={{
-            position: "absolute",
-            top: "6px",
-            right: "6px",
-            background: menuColor,
-            border: `1px solid ${outlineColor}`,
-            borderRadius: "8px",
-            padding: "4px",
-            zIndex: 3,
-            display: "flex",
-            flexDirection: "column",
-            minWidth: "140px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.6)"
-          }}
+          style={styles.overlayDropdown}
         >
-          {storage.folderOrder.length === 0 && (
-            <div style={{ color: secondaryTextColor, padding: "6px 8px", fontSize: "14px" }}>No folders yet</div>
-          )}
+          {storage.folderOrder.length === 0 && <div style={styles.overlayEmptyText}>No folders yet</div>}
           {storage.folderOrder.map((id: string) => (
             <div
               key={id}
@@ -314,37 +199,25 @@ function GifOverlay({ item }: { item: any }) {
                 await storageModule.addGifToFolder(id, item.url);
                 setOpen(false);
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#35373c")}
+              onMouseEnter={(e) => (e.currentTarget.style.background = bg)}
               onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              style={{
-                padding: "6px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                color: primaryTextColor,
-                fontSize: "14px"
-              }}
+              style={styles.overlayFolderItem}
             >
               {storage.folders[id].name}
             </div>
           ))}
           {isInCurrentFolder && (
             <>
-              <div style={{ height: "1px", background: outlineColor, margin: "4px 0" }} />
+              <div style={styles.overlayDivider} />
               <div
                 onClick={async (e) => {
                   e.stopPropagation();
                   await storageModule.removeGifFromFolder(selectedFolder, item.url);
                   setOpen(false);
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#35373c")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = bg)}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                style={{
-                  padding: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  color: warningColor,
-                  fontSize: "14px"
-                }}
+                style={styles.overlayRemoveItem}
               >
                 Remove from folder
               </div>
